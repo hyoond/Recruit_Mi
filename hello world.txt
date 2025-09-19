@@ -1,1 +1,2 @@
 hello my friends this is me writing the txt file 
+hello me this is my friends writing the txt file

@@ -1,0 +1,14 @@
+<html>
+    <head>Recruit Mi - Homepage</head>
+    <head>
+        <link href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <h1>Recruit Mi</h1>
+        <p>Welcome, to start, please enter your username</p>
+        <form action="/homepage" method="POST">
+        <input type="text" id="username" name="username" placeholder="Enter Your Username" required>
+        <button type="submit"> Submit </button>
+        </form>
+    </body>
+</html>

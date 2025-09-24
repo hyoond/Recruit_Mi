@@ -35,19 +35,19 @@ def preferences():
     cursor.execute('SELECT * FROM preferences')
     preferences = cursor.fetchall()
     if request.method == "POST":
-        global selected
+        global selected_str
         selected = request.form.getlist("preferences")
         selected_str = ",".join(selected)
         cursor.execute ('''CREATE TABLE IF NOT EXISTS user(
                         username TEXT,
                         contact_num TEXT,
-                        preferences TEXT)
+                        preferences STRING (255))
                         ''')
         cursor.execute (''' INSERT INTO user(username, contact_num, preferences)
                        VALUES (?,?,?)''',(username,contact_num,selected_str))
         conn.commit()
 
-        return redirect(url_for("interested"))
+        return redirect(url_for("interested")), selected_str
     
     return render_template ("preferences.html", preferences = preferences, username = username)
 
@@ -55,20 +55,22 @@ def preferences():
 def interested():
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute ('''SELECT * FROM user
-                    WHERE preferences = ? 
-                    ''', (selected))
+    cursor.execute('''SELECT * FROM user
+                      WHERE preferences LIKE ?''', (f"%{selected_str}%",))
     people = cursor.fetchall()
-    return render_template("interested.html", people = people)
+    return render_template("interested.html", people=people)
 
-@app.route('/custom', methods =(["POST","GET"]))
+
+@app.route('/custom', methods=["POST","GET"])
 def custom():
-    custom_interest = request.form["custom_interest"]
+    custom_interest = request.form.get("custom_interest", "")
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute ('INSERT INTO preferences(type) VALUES(?)',(custom_interest))
+    cursor.execute('INSERT INTO preferences(type) VALUES(?)', (custom_interest,))
     conn.commit()
-    return render_template("custom.html")
+    if request.method == "POST":
+        return redirect(url_for("interested"))
+    return render_template("custom.html", custom_interest = custom_interest)
 
 if __name__ == '__main__':
     app.run(debug=True)

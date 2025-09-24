@@ -1,0 +1,13 @@
+<html>
+    <head>
+        <title>Custom Interest</title>
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    </head>
+    <body>
+        <h1>Add Your Custom Interest</h1>
+        <form action="/custom" method="POST">
+            <input type="text" id="custom_interest" name="custom_interest" placeholder="Add Your Custom Interest">
+            <button type="submit">Submit</button>
+        </form>
+    </body>
+</html>

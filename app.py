@@ -37,14 +37,15 @@ def preferences():
     if request.method == "POST":
         global selected
         selected = request.form.getlist("preferences")
+        selected_str = ",".join(selected)
         cursor.execute ('''CREATE TABLE IF NOT EXISTS user(
                         username TEXT,
                         contact_num TEXT,
                         preferences TEXT)
                         ''')
         cursor.execute (''' INSERT INTO user(username, contact_num, preferences)
-                       VALUES (?,?,?)''',(username,contact_num,selected) )
-        cursor.commit()
+                       VALUES (?,?,?)''',(username,contact_num,selected_str))
+        conn.commit()
 
         return redirect(url_for("interested"))
     
@@ -52,10 +53,24 @@ def preferences():
 
 @app.route('/interested', methods=["GET","POST"])
 def interested():
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
     cursor.execute ('''SELECT * FROM user
                     WHERE preferences = ? 
                     ''', (selected))
-    return render_template(interested.html)
+    people = cursor.fetchall()
+    return render_template("interested.html", people = people)
+
+@app.route('/custom', methods =(["POST","GET"]))
+def custom():
+    custom_interest = request.form["custom_interest"]
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute ('INSERT INTO preferences(type) VALUES(?)',(custom_interest))
+    conn.commit()
+    return render_template("custom.html")
 
 if __name__ == '__main__':
     app.run(debug=True)
+
+    

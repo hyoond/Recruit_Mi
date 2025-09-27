@@ -7,18 +7,22 @@
     <div class="container">
         <div class="content-wrapper fade-in">
             <form action="/preferences" method="POST">
+                <input type="hidden" name="username" value="{{ username }}">
+                <input type="hidden" name="contact_num" value="{{ contact_num }}">
                 <h1>Welcome {{ username }}, To Continue Please Select Your Preferences</h1>
 
                 <table class="preferences-table">
                     {% for i in preferences %}
-                    <tr>
-                        <td>
-                            <div class="checkbox-group">
-                                <input type="checkbox" name="preferences" value="{{ i[0] }}"> 
-                                <label>{{ i[0] }}</label>
-                            </div>
-                        </td>
-                    </tr>
+                      {% if i[0].strip() %}
+                      <tr>
+                          <td>
+                              <div class="checkbox-group">
+                                  <input type="checkbox" name="preferences" value="{{ i[0] }}"> 
+                                  <label>{{ i[0] }}</label>
+                              </div>
+                          </td>
+                      </tr>
+                      {% endif %}
                     {% endfor %}
                     <tr>
                         <td>

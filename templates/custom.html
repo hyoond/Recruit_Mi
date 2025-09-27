@@ -4,10 +4,19 @@
         <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
     </head>
     <body>
-        <h1>Add Your Custom Interest</h1>
-        <form action="/custom" method="POST">
-            <input type="text" id="custom_interest" name="custom_interest" placeholder="Add Your Custom Interest">
-            <button type="submit">Submit</button>
-        </form>
+        <div class="container">
+            <div class="content-wrapper fade-in">
+                <h1>Add Your Custom Interest</h1>
+                <form action="/custom" method="POST" class="custom-form">
+                    <div class="form-group">
+                        <input type="text" id="custom_interest" name="custom_interest" placeholder="Add Your Custom Interest" required>
+                    </div>
+                    <button type="submit">Add Interest</button>
+                    <button type="button" onclick="window.location.href='{{ url_for('preferences') }}'" class="secondary-btn">
+                        Back to Preferences
+                    </button>
+                </form>
+            </div>
+        </div>
     </body>
 </html>

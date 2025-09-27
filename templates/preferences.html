@@ -2,76 +2,34 @@
 <head>
     <title>Select Your Preferences</title>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f9fafb;
-            color: #333;
-            text-align: center;
-            margin: 0;
-            padding: 20px;
-        }
-
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        form {
-            background: #fff;
-            padding: 20px;
-            max-width: 600px;
-            margin: 0 auto;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        }
-
-        table {
-            width: 100%;
-            margin: 10px 0;
-            border-collapse: collapse;
-        }
-
-        td {
-            padding: 10px;
-            text-align: left;
-        }
-
-        input[type="checkbox"] {
-            margin-right: 10px;
-            transform: scale(1.2);
-        }
-
-        input[type="text"] {
-            width: 95%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 6px;
-            font-size: 14px;
-        }
-
-    </style>
 </head>
 <body>
-    <form action="/preferences" method="POST">
-        <h1>Welcome {{ username }}, To Continue Please Select Your Preferences</h1>
+    <div class="container">
+        <div class="content-wrapper fade-in">
+            <form action="/preferences" method="POST">
+                <h1>Welcome {{ username }}, To Continue Please Select Your Preferences</h1>
 
-        <table>
-            {% for i in preferences %}
-            <tr>
-                <td>
-                    <input type="checkbox" name="preferences" value="{{ i[0] }}"> {{ i[0] }}
-                </td>
-            </tr>
-            {% endfor %}
-            <tr>
-                <td>
-                   <a href="{{ url_for('custom') }}">Add Custom Interest</a>
-                </td>
-            </tr>
-        </table>
+                <table class="preferences-table">
+                    {% for i in preferences %}
+                    <tr>
+                        <td>
+                            <div class="checkbox-group">
+                                <input type="checkbox" name="preferences" value="{{ i[0] }}"> 
+                                <label>{{ i[0] }}</label>
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                    <tr>
+                        <td>
+                            <a href="{{ url_for('custom') }}">Add Custom Interest</a>
+                        </td>
+                    </tr>
+                </table>
 
-        <button type="submit">Submit</button>
-    </form>
+                <button type="submit">Submit Preferences</button>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

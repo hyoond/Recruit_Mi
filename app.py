@@ -38,6 +38,7 @@ def preferences():
         contact_num = session.get("contact_num", "")
         selected = request.form.getlist("preferences")
         selected_str = ",".join(selected)
+        session['selected'] = selected_str
 
         conn = sqlite3.connect('database.db')
         cursor = conn.cursor()
@@ -67,16 +68,21 @@ def preferences():
 #Interested function to render interested html page and also received user's preferences and then search in the database in order to show the people with the same interests
 @app.route('/interested', methods=["GET","POST"])
 def interested():
-    selected_str = request.args.get('selected_str', '')
     username = session.get("username", '')
+    selected = session.get("selected", '')
+    selected_list = [s.strip() for s in selected.split(",") if s.strip()]
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-    cursor.execute('''SELECT * FROM user
+    people = []
+    for i in selected_list: 
+      cursor.execute('''SELECT * FROM user
                       WHERE preferences LIKE ?
                       EXCEPT 
                       SELECT * FROM user
-                      WHERE username = ? ''', (f"%{selected_str}%",username))
-    people = cursor.fetchall()
+                      WHERE username = ? ''', (f"%{i}%",username))
+      common_interest = cursor.fetchall()
+      people.extend(common_interest)
+    
     return render_template("interested.html", people=people)
 
 #Custom function to render custom html page and to receive input from user on their custom interest then inserts into the preferences table

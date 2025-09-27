@@ -1,10 +1,13 @@
-from flask import Flask, render_template, request, redirect, url_for
+#Import essential modules
+from flask import Flask, render_template, request, redirect, url_for, session
 import sqlite3
 import os
 
+#Crucial Code to build flask enviroment
 app = Flask(__name__)
 app.secret_key = 'secretkey123'
 
+#Detect whether the database file is exist or not and then insert basic interests
 if not os.path.exists("database.db"):
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
@@ -15,23 +18,24 @@ if not os.path.exists("database.db"):
     conn.commit()
     conn.close()
 
-
+#Whole system start with this function and then will direct to the homepage
 @app.route("/")
 def start():
     return render_template("homepage.html")
 
+#homepage function to render the homepage.html and receive the variable username and contact number then pass to preferences function
 @app.route('/homepage', methods=["POST"])
 def homepage():
-    username = ""
-    username = request.form["username"]
-    contact_num = request.form["contact_num"]
-    return redirect(url_for('preferences', username = username, contact_num = contact_num))
+    session['username'] = request.form["username"]
+    session['contact_num'] = request.form["contact_num"]
+    return redirect(url_for('preferences'))
 
+#Preferences function to render preference html page while also create and insert user info received from user input in homepage, also retrive interests then pass to preferences page to display the interests selection
 @app.route('/preferences', methods=["GET", "POST"])
 def preferences():
     if request.method == "POST":
-        username = request.form.get("username", "")
-        contact_num = request.form.get("contact_num", "")
+        username = session.get("username", "")
+        contact_num = session.get("contact_num", "")
         selected = request.form.getlist("preferences")
         selected_str = ",".join(selected)
 
@@ -60,10 +64,11 @@ def preferences():
     return render_template("preferences.html", preferences=preferences, username=username, contact_num=contact_num)
 
 
+#Interested function to render interested html page and also received user's preferences and then search in the database in order to show the people with the same interests
 @app.route('/interested', methods=["GET","POST"])
 def interested():
     selected_str = request.args.get('selected_str', '')
-    username = request.args.get('username', '')
+    username = session.get("username", '')
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('''SELECT * FROM user
@@ -74,7 +79,7 @@ def interested():
     people = cursor.fetchall()
     return render_template("interested.html", people=people)
 
-
+#Custom function to render custom html page and to receive input from user on their custom interest then inserts into the preferences table
 @app.route('/custom', methods=["POST","GET"])
 def custom():
     custom_interest = request.form.get("custom_interest", "")
@@ -86,6 +91,7 @@ def custom():
         return redirect(url_for("preferences"))
     return render_template("custom.html", custom_interest = custom_interest)
 
+#Crucial ending code for flask
 if __name__ == '__main__':
     app.run(debug=True)
 
